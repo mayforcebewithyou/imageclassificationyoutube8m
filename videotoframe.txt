@@ -1,0 +1,65 @@
+
+def videotoframe(url,frameno):
+	import os
+	import cv2,pafy
+	import matplotlib.pyplot as plt
+
+	#url="https://www.youtube.com/watch?v=ph7PNrAfs2A"
+	videopafy=pafy.new(url)
+	best=videopafy.getbest(preftype="webm")
+	video=cv2.VideoCapture(best.url)
+	
+	video.set(1,frameno)
+	ret,frame=video.read()
+	plt.imshow(frame)
+	plt.show()
+	return frame
+	
+# the following steps is followed for creating a dataframe and store all the extraceted flat frame values - outdoor
+frame=videotoframe(url,frameno)
+d={'A':[frame.flatten()],'B':[1]}
+df2=pd.DataFrame(data=d)
+frame=videotoframe(url,frameno)
+d={'A':[frame.flatten()],'B':[1]}
+df=pd.DataFrame(data=d)
+df=df.append(df2)
+
+# the following steps is followed for creating a dataframe and store all the extraceted flat frame values - indoor
+frame=videotoframe(url,frameno)
+d={'A':[frame.flatten()],'B':[1]}
+df2=pd.DataFrame(data=d)
+frame=videotoframe(url,frameno)
+d={'A':[frame.flatten()],'B':[1]}
+dff=pd.DataFrame(data=d)
+dff=dff.append(df2)
+
+# convert the dataframe to list for easy computation 
+AA=df['A'].tolist()
+ 
+# for outdoor images
+d={}
+for i in range (0,200):
+    d2={'C':[dct(AA[i])[:30]]}
+    d2=pd.DataFrame(data=d2)
+    d=d.append(d2)
+
+
+# for indoor images
+n={}
+n=pd.DataFrame(data=n)
+for i in range (0,200):
+    d2={'C':[dct(BB[i])[:30]]}
+    d2=pd.DataFrame(data=d2)
+    n=n.append(d2)
+
+# concat all the relavent dataframes
+indoor=pd.concat([dff,n],axis=1)
+indoor
+outdoor=pd.concat([df,d],axis=1)
+outdoor
+
+# save all the data to excel sheet
+writer = pd.ExcelWriter('output_dct.xlsx')
+outdoor.to_excel(writer,'Sheet1')
+indoor.to_excel(writer,'Sheet2')
+writer.save()
