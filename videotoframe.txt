@@ -1,4 +1,4 @@
-
+ 	
 def videotoframe(url,frameno):
 	import os
 	import cv2,pafy
@@ -63,3 +63,20 @@ writer = pd.ExcelWriter('output_dct.xlsx')
 outdoor.to_excel(writer,'Sheet1')
 indoor.to_excel(writer,'Sheet2')
 writer.save()
+
+
+A=""
+for i in range(0,400):
+	A+=','+','.join(map(str,datadct['c'][i].tolist()))
+
+mat=np.matrix(A)
+mat1=np.reshape(mat,(400,30))
+mat.tofile('foo.csv',sep=',') # save just in case so you can retrive data if application closes unexpectedly
+X=pd.DataFrame(mat1)
+
+Y=pd.DataFrame(dct['D'])
+
+#pickle save these variables 
+
+X.to_pickle('X.pkl')
+Y.to_pickle('Y.pkl')
